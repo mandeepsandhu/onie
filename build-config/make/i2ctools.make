@@ -30,6 +30,14 @@ PHONY += i2ctools i2ctools-download i2ctools-source i2ctools-patch \
 	 i2ctools-build i2ctools-install i2ctools-clean \
 	 i2ctools-download-clean
 
+I2CTOOLS_MACHINEPATCHDIR = $(shell \
+			   test -d $(MACHINEDIR)/i2ctools && \
+			   echo "$(MACHINEDIR)/i2ctools")
+
+ifneq ($(I2CTOOLS_MACHINEPATCHDIR),)
+  I2CTOOLS_MACHINEPATCHDIR_FILES = $(I2CTOOLS_MACHINEPATCHDIR)/*
+endif
+
 i2ctools: $(I2CTOOLS_STAMP)
 
 DOWNLOAD += $(I2CTOOLS_DOWNLOAD_STAMP)
@@ -50,19 +58,23 @@ $(I2CTOOLS_SOURCE_STAMP): $(TREE_STAMP) | $(I2CTOOLS_DOWNLOAD_STAMP)
 	$(Q) touch $@
 
 i2ctools-patch: $(I2CTOOLS_PATCH_STAMP)
-$(I2CTOOLS_PATCH_STAMP): $(I2CTOOLS_SRCPATCHDIR)/* $(MACHINEDIR)/i2ctools/* $(I2CTOOLS_SOURCE_STAMP)
+$(I2CTOOLS_PATCH_STAMP): $(I2CTOOLS_SRCPATCHDIR)/* $(I2CTOOLS_MACHINEPATCHDIR_FILES) $(I2CTOOLS_SOURCE_STAMP)
 	$(Q) rm -f $@ && eval $(PROFILE_STAMP)
 	$(Q) echo "==== Patching i2ctools ===="
-	$(Q) [ -r $(MACHINEDIR)/i2ctools/series ] || \
-		(echo "Unable to find machine dependent kernel patch series: $(MACHINEDIR)/i2ctools/series" && \
-		exit 1)
 	$(Q) mkdir -p $(I2CTOOLS_DIR)/sys_eeprom
 	$(Q) cp $(I2CTOOLS_DIR)/eepromer/24cXX.c $(I2CTOOLS_DIR)/sys_eeprom/24cXX.c
 	$(Q) cp $(I2CTOOLS_DIR)/eepromer/24cXX.h $(I2CTOOLS_DIR)/sys_eeprom/24cXX.h
 	$(Q) mkdir -p $(I2CTOOLS_PATCHDIR)
 	$(Q) cp $(I2CTOOLS_SRCPATCHDIR)/* $(I2CTOOLS_PATCHDIR)
-	$(Q) cat $(MACHINEDIR)/i2ctools/series >> $(I2CTOOLS_PATCHDIR)/series
-	$(Q) cp $(MACHINEDIR)/i2ctools/*.patch $(I2CTOOLS_PATCHDIR)
+ifneq ($(I2CTOOLS_MACHINEPATCHDIR),)
+	$(Q) if [ -r $(I2CTOOLS_MACHINEPATCHDIR)/series ] ; then \
+		cat $(I2CTOOLS_MACHINEPATCHDIR)/series >> $(I2CTOOLS_PATCHDIR)/series ; \
+		cp $(I2CTOOLS_MACHINEPATCHDIR)/*.patch $(I2CTOOLS_PATCHDIR) ; \
+		else \
+		echo "Unable to find machine dependent i2ctools patch series: $(I2CTOOLS_MACHINEPATCHDIR)/series" ; \
+		exit 1 ; \
+		fi
+endif
 	$(Q) $(SCRIPTDIR)/apply-patch-series $(I2CTOOLS_PATCHDIR)/series $(I2CTOOLS_DIR)
 	$(Q) touch $@
 
@@ -78,7 +90,7 @@ $(I2CTOOLS_BUILD_STAMP): $(I2CTOOLS_NEW_FILES) $(I2CTOOLS_PATCH_STAMP) \
 	$(Q) echo "====  Building i2ctools-$(I2CTOOLS_VERSION) ===="
 	$(Q) PATH='$(CROSSBIN):$(PATH)'	$(MAKE) -C $(I2CTOOLS_DIR) \
 		CROSS_COMPILE=$(CROSSPREFIX) CFLAGS="$(ONIE_CFLAGS)" \
-		LDFLAGS="$(ONIE_LDFLAGS)"
+		LDFLAGS="$(ONIE_LDFLAGS)" SYSEEPROM_ENABLE=$(I2CTOOLS_SYSEEPROM)
 	$(Q) touch $@
 
 i2ctools-install: $(I2CTOOLS_INSTALL_STAMP)
@@ -87,11 +99,13 @@ $(I2CTOOLS_INSTALL_STAMP): $(SYSROOT_INIT_STAMP) $(I2CTOOLS_BUILD_STAMP)
 	$(Q) echo "==== Installing i2ctools in $(DEV_SYSROOT) ===="
 	$(Q) PATH='$(CROSSBIN):$(PATH)'	$(MAKE) -C $(I2CTOOLS_DIR) \
 		CROSS_COMPILE=$(CROSSPREFIX) CFLAGS="$(ONIE_CFLAGS)" \
-		LDFLAGS="$(ONIE_LDFLAGS)"
+		LDFLAGS="$(ONIE_LDFLAGS)" SYSEEPROM_ENABLE=$(I2CTOOLS_SYSEEPROM)
 	$(Q) for file in $(I2CTOOLS_PROGRAMS); do \
 		cp -av $(I2CTOOLS_DIR)/tools/$$file $(SYSROOTDIR)/usr/bin ; \
 	     done
+ifeq ($(I2CTOOLS_SYSEEPROM),yes)
 	$(Q) cp -av $(I2CTOOLS_DIR)/sys_eeprom/onie-syseeprom $(SYSROOTDIR)/usr/bin/onie-syseeprom
+endif
 	$(Q) touch $@
 
 USERSPACE_CLEAN += i2ctools-clean
