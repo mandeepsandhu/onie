@@ -34,7 +34,7 @@ MACHINE_CONF	 = $(MBUILDDIR)/machine.conf
 INSTALLER_DIR	= $(abspath ../installer)
 
 # List the packages to install
-PACKAGES_INSTALL_STAMPS = \
+PACKAGES_INSTALL_STAMPS += \
 	$(ZLIB_INSTALL_STAMP) \
 	$(BUSYBOX_INSTALL_STAMP) \
 	$(MTDUTILS_INSTALL_STAMP) \
@@ -129,7 +129,7 @@ $(SYSROOT_CHECK_STAMP): $(PACKAGES_INSTALL_STAMPS)
 		chmod +w $(SYSROOTDIR)/usr/bin/$$(basename $$file) ; \
 	done
 	$(Q) find $(SYSROOTDIR) -path */lib/grub/* -prune -o \( -type f -print0 \) | xargs -0 file | \
-		grep ELF | awk -F':' '{ print $$1 }' | xargs $(CROSSBIN)/$(CROSSPREFIX)strip
+		grep ELF | awk -F':' '{ print $$1 }' | grep -v "/lib/modules/" | xargs $(CROSSBIN)/$(CROSSPREFIX)strip
 	$(Q) rm -rf $(CHECKROOT)
 	$(Q) mkdir -p $(CHECKROOT) && \
 	     $(CROSSBIN)/$(CROSSPREFIX)populate -r $(DEV_SYSROOT) \
@@ -255,7 +255,7 @@ RECOVERY_ISO_IMAGE	= $(IMAGEDIR)/onie-recovery-$(ARCH)-$(MACHINE_PREFIX).iso
 RECOVERY_CONF_DIR	= $(PROJECTDIR)/build-config/recovery
 RECOVERY_SYSROOT	= $(MBUILDDIR)/recovery-sysroot
 RECOVERY_CPIO		= $(MBUILDDIR)/recovery.cpio
-RECOVERY_INITRD		= $(MBUILDDIR)/recovery.initrd
+RECOVERY_INITRD		= $(IMAGEDIR)/recovery-$(ARCH)-$(MACHINE_PREFIX).initrd
 RECOVERY_ISO_SYSROOT	= $(MBUILDDIR)/recovery-sysroot-iso
 PXE_EFI64_GRUB_MODS	= $(MBUILDDIR)/pxe-efi64-grub-modlist
 
