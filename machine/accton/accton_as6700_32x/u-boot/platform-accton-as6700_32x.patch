@@ -21069,7 +21069,7 @@ index b175358..099a3cb 100644
  
  #ifdef CONFIG_CMD_SF_TEST
 diff --git a/common/cmd_sys_eeprom.c b/common/cmd_sys_eeprom.c
-index 99f0db0..29c087f 100644
+index 3d5dace..9fdda9e 100644
 --- a/common/cmd_sys_eeprom.c
 +++ b/common/cmd_sys_eeprom.c
 @@ -8,6 +8,8 @@
@@ -21081,7 +21081,7 @@ index 99f0db0..29c087f 100644
  #include <linux/ctype.h>
  
  #include "sys_eeprom.h"
-@@ -933,6 +935,84 @@ int write_sys_eeprom(void *eeprom, int len)
+@@ -937,6 +939,84 @@ int write_sys_eeprom(void *eeprom, int len)
  
  #endif /* CONFIG_SYS_FLASH_HWINFO_ADDR && CONFIG_SYS_FLASH_HWINFO_SECT_SIZE */
  
@@ -21166,7 +21166,7 @@ index 99f0db0..29c087f 100644
  #ifdef CONFIG_SYS_EEPROM_USE_COMMON_I2C_IO
  
  /**
-@@ -1059,18 +1139,35 @@ int mac_read_from_eeprom(void)
+@@ -1063,18 +1143,35 @@ int mac_read_from_eeprom(void)
  
  	for (i = 0; i < min(maccount, CONFIG_SYS_EEPROM_MAX_NUM_ETH_PORTS); i++) {
  		if (is_valid_ether_addr(macbase)) {
@@ -21203,7 +21203,7 @@ index 99f0db0..29c087f 100644
  
  			macbase[5]++;
  			if (macbase[5] == 0) {
-@@ -1134,3 +1231,36 @@ int populate_serial_number(void)
+@@ -1138,3 +1235,36 @@ int populate_serial_number(void)
  }
  
  #endif /* CONFIG_POPULATE_SERIAL_NUMBER */
@@ -37451,7 +37451,7 @@ index a29f6a6..f26a80d 100644
  int set_cpu_clk_info(void);
 diff --git a/include/configs/ACCTON_AS6700_32X-R0.h b/include/configs/ACCTON_AS6700_32X-R0.h
 new file mode 100644
-index 0000000..16223e8
+index 0000000..2ed0c8b
 --- /dev/null
 +++ b/include/configs/ACCTON_AS6700_32X-R0.h
 @@ -0,0 +1,879 @@
@@ -38325,7 +38325,7 @@ index 0000000..16223e8
 +    "diag_start=0x00930000\0"   \
 +    "diag_sz.b=0x02000000\0"    \
 +    "onie_start=0x00130000\0"   \
-+    "onie_sz.b=0x800000\0"
++    "onie_sz.b=0x500000\0"
 +
 +#define CONFIG_EXTRA_ENV_SETTINGS \
 +    CONFIG_PLATFORM_ENV           \
@@ -38336,7 +38336,7 @@ index 0000000..16223e8
 +#endif	/* __CONFIG_H */
 diff --git a/include/configs/ACCTON_AS6700_32X-R1.h b/include/configs/ACCTON_AS6700_32X-R1.h
 new file mode 100644
-index 0000000..1fdf450
+index 0000000..873c69a
 --- /dev/null
 +++ b/include/configs/ACCTON_AS6700_32X-R1.h
 @@ -0,0 +1,880 @@
@@ -39211,7 +39211,7 @@ index 0000000..1fdf450
 +    "diag_start=0x009c0000\0"   \
 +    "diag_sz.b=0x02000000\0"    \
 +    "onie_start=0x001c0000\0"   \
-+    "onie_sz.b=0x800000\0"
++    "onie_sz.b=0x500000\0"
 +
 +#define CONFIG_EXTRA_ENV_SETTINGS \
 +    CONFIG_PLATFORM_ENV           \
@@ -44354,7 +44354,7 @@ index 76b3ca6..3a166d9 100644
 +
 +#endif	/* __CONFIG_H */
 diff --git a/include/configs/common_config.h b/include/configs/common_config.h
-index e9e2135..b8bf4b0 100644
+index e9e2135..9d0d47d 100644
 --- a/include/configs/common_config.h
 +++ b/include/configs/common_config.h
 @@ -26,7 +26,7 @@
@@ -44440,15 +44440,6 @@ index e9e2135..b8bf4b0 100644
  
  #define CONFIG_ENV_SIZE		0x2000
  
-@@ -144,7 +147,7 @@
-  * Environment Variable Configuration
-  */
- 
--#define CONFIG_BOOTDELAY 10	/* -1 disables auto-boot */
-+#define CONFIG_BOOTDELAY 3	/* -1 disables auto-boot */
- #undef	CONFIG_BOOTARGS		/* the boot command will set bootargs*/
- 
- #define CONFIG_BAUDRATE	115200
 diff --git a/include/configs/corenet_ds.h b/include/configs/corenet_ds.h
 index 3f42cd9..26d1689 100644
 --- a/include/configs/corenet_ds.h

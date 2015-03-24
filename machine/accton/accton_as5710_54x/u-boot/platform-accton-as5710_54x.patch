@@ -21131,10 +21131,10 @@ index b175358..bd3c508 100644
  #include <spi_flash.h>
  
 diff --git a/common/cmd_sys_eeprom.c b/common/cmd_sys_eeprom.c
-index 99f0db0..9c43032 100644
+index 3d5dace..6bb3afc 100644
 --- a/common/cmd_sys_eeprom.c
 +++ b/common/cmd_sys_eeprom.c
-@@ -1059,18 +1059,35 @@ int mac_read_from_eeprom(void)
+@@ -1063,18 +1063,35 @@ int mac_read_from_eeprom(void)
  
  	for (i = 0; i < min(maccount, CONFIG_SYS_EEPROM_MAX_NUM_ETH_PORTS); i++) {
  		if (is_valid_ether_addr(macbase)) {
@@ -21171,7 +21171,7 @@ index 99f0db0..9c43032 100644
  
  			macbase[5]++;
  			if (macbase[5] == 0) {
-@@ -1134,3 +1151,36 @@ int populate_serial_number(void)
+@@ -1138,3 +1155,36 @@ int populate_serial_number(void)
  }
  
  #endif /* CONFIG_POPULATE_SERIAL_NUMBER */
@@ -24927,7 +24927,7 @@ index a29f6a6..997efd5 100644
  int set_cpu_clk_info(void);
 diff --git a/include/configs/AS5710_54X.h b/include/configs/AS5710_54X.h
 new file mode 100644
-index 0000000..fe3d32c
+index 0000000..809e4e7
 --- /dev/null
 +++ b/include/configs/AS5710_54X.h
 @@ -0,0 +1,687 @@
@@ -25569,7 +25569,7 @@ index 0000000..fe3d32c
 +#define CONFIG_SYS_EEPROM_MAX_SIZE		CONFIG_SYS_FLASH_HWINFO_SECT_SIZE
 +
 +#define ONIE_SIZE_B	\
-+	"onie_sz.b=0x00d00000\0"
++	"onie_sz.b=0x00500000\0"
 +
 +#if defined(CONFIG_BOOT_DEVICE_NOR_FLASH_SIZE_128MB)
 +#define CONFIG_PLATFORM_ENV	    \
@@ -30418,7 +30418,7 @@ index 76b3ca6..3a166d9 100644
 +
 +#endif	/* __CONFIG_H */
 diff --git a/include/configs/common_config.h b/include/configs/common_config.h
-index e9e2135..00a987a 100644
+index e9e2135..46308b8 100644
 --- a/include/configs/common_config.h
 +++ b/include/configs/common_config.h
 @@ -26,7 +26,7 @@
@@ -30495,15 +30495,6 @@ index e9e2135..00a987a 100644
  
  #define CONFIG_ENV_SIZE		0x2000
  
-@@ -144,7 +147,7 @@
-  * Environment Variable Configuration
-  */
- 
--#define CONFIG_BOOTDELAY 10	/* -1 disables auto-boot */
-+#define CONFIG_BOOTDELAY 5	/* -1 disables auto-boot */
- #undef	CONFIG_BOOTARGS		/* the boot command will set bootargs*/
- 
- #define CONFIG_BAUDRATE	115200
 diff --git a/include/configs/corenet_ds.h b/include/configs/corenet_ds.h
 index 3f42cd9..26d1689 100644
 --- a/include/configs/corenet_ds.h

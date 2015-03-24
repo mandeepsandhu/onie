@@ -4,7 +4,7 @@ Support for the Accton AS5710_54X networking platform.
 
 diff --git a/arch/powerpc/boot/dts/as5710_54x.dts b/arch/powerpc/boot/dts/as5710_54x.dts
 new file mode 100644
-index 0000000..26873b3
+index 0000000..0b21a89
 --- /dev/null
 +++ b/arch/powerpc/boot/dts/as5710_54x.dts
 @@ -0,0 +1,1517 @@
@@ -1248,7 +1248,7 @@ index 0000000..26873b3
 +		};
 +
 +		usb@210000 {
-+			compatible = "fsl-usb2-mph-v1.6", "fsl,mpc85xx-usb2-mph", "fsl-usb2-mph";
++			compatible = "fsl-usb2-dr-v1.6", "fsl,mpc85xx-usb2-dr", "fsl-usb2-dr";
 +			reg = <0x210000 0x1000>;
 +			#address-cells = <0x1>;
 +			#size-cells = <0x0>;
@@ -1526,7 +1526,7 @@ index 0000000..26873b3
 +	};
 +};
 diff --git a/arch/powerpc/platforms/85xx/Kconfig b/arch/powerpc/platforms/85xx/Kconfig
-index 48a56fd..a395f7b 100644
+index 48a56fd..4deca00 100644
 --- a/arch/powerpc/platforms/85xx/Kconfig
 +++ b/arch/powerpc/platforms/85xx/Kconfig
 @@ -232,6 +232,20 @@ config GE_IMP3A
@@ -1545,7 +1545,7 @@ index 48a56fd..a395f7b 100644
 +	select PPC_EPAPR_HV_PIC
 +	select HAS_FSL_QBMAN
 +	help
-+	  This option enables support for the ACCTON AS6701_32X networking platform
++	  This option enables support for the ACCTON AS5710_54X networking platform
 +
  config P2041_RDB
  	bool "Freescale P2041 RDB"

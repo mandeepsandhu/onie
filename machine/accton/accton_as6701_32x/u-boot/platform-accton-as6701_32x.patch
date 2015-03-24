@@ -8673,10 +8673,10 @@ index 0000000..4437731
 +'setenv hwconfig 'qe;tdm'' to enalbe QE TDM and disable Nor-Flash/CPLD.
 diff --git a/board/accton/as6701_32x/as6701_32x.c b/board/accton/as6701_32x/as6701_32x.c
 new file mode 100644
-index 0000000..06737ae
+index 0000000..3479684
 --- /dev/null
 +++ b/board/accton/as6701_32x/as6701_32x.c
-@@ -0,0 +1,1155 @@
+@@ -0,0 +1,1140 @@
 +/*
 + * Copyright 2010-2011 Freescale Semiconductor, Inc.
 + *
@@ -9214,7 +9214,7 @@ index 0000000..06737ae
 +	phys_addr_t base;
 +	phys_size_t size;
 +	const char *soc_usb_compat = "fsl-usb2-dr";
-+	int err, usb1_off, usb2_off;
++	int err, usb1_off;
 +
 +	ft_cpu_setup(blob, bd);
 +
@@ -9264,7 +9264,6 @@ index 0000000..06737ae
 +	}
 +#endif
 +
-+/* Delete USB2 node as it is muxed with eLBC */
 +	usb1_off = fdt_node_offset_by_compatible(blob, -1,
 +		soc_usb_compat);
 +	if (usb1_off < 0) {
@@ -9273,20 +9272,6 @@ index 0000000..06737ae
 +			fdt_strerror(usb1_off));
 +		return;
 +	}
-+	usb2_off = fdt_node_offset_by_compatible(blob, usb1_off,
-+			soc_usb_compat);
-+	if (usb2_off < 0) {
-+		printf("WARNING: (usb2_off) could not find compatible node"
-+			" %s: %s.\n", soc_usb_compat,
-+			fdt_strerror(usb2_off));
-+		return;
-+	}
-+	err = fdt_del_node(blob, usb2_off);
-+	if (err < 0) {
-+		printf("WARNING: could not remove %s: %s.\n",
-+			soc_usb_compat, fdt_strerror(err));
-+	}
-+
 +}
 +#endif
 +
@@ -21232,10 +21217,10 @@ index b175358..bd3c508 100644
  #include <spi_flash.h>
  
 diff --git a/common/cmd_sys_eeprom.c b/common/cmd_sys_eeprom.c
-index 99f0db0..9c43032 100644
+index 3d5dace..6bb3afc 100644
 --- a/common/cmd_sys_eeprom.c
 +++ b/common/cmd_sys_eeprom.c
-@@ -1059,18 +1059,35 @@ int mac_read_from_eeprom(void)
+@@ -1063,18 +1063,35 @@ int mac_read_from_eeprom(void)
  
  	for (i = 0; i < min(maccount, CONFIG_SYS_EEPROM_MAX_NUM_ETH_PORTS); i++) {
  		if (is_valid_ether_addr(macbase)) {
@@ -21272,7 +21257,7 @@ index 99f0db0..9c43032 100644
  
  			macbase[5]++;
  			if (macbase[5] == 0) {
-@@ -1134,3 +1151,36 @@ int populate_serial_number(void)
+@@ -1138,3 +1155,36 @@ int populate_serial_number(void)
  }
  
  #endif /* CONFIG_POPULATE_SERIAL_NUMBER */
@@ -24837,10 +24822,10 @@ index a29f6a6..f26a80d 100644
  int set_cpu_clk_info(void);
 diff --git a/include/configs/AS6701_32X.h b/include/configs/AS6701_32X.h
 new file mode 100644
-index 0000000..eabc7cd
+index 0000000..1adaf21
 --- /dev/null
 +++ b/include/configs/AS6701_32X.h
-@@ -0,0 +1,826 @@
+@@ -0,0 +1,821 @@
 +/*
 + * Copyright 2010-2011 Freescale Semiconductor, Inc.
 + *
@@ -25543,11 +25528,6 @@ index 0000000..eabc7cd
 +/* default location for tftp and bootm */
 +#define CONFIG_LOADADDR	1000000
 +
-+#define CONFIG_BOOTDELAY 5	/* -1 disables auto-boot */
-+/*#define CONFIG_BOOTARGS*/	/* the boot command will set bootargs */
-+
-+#define CONFIG_BAUDRATE	115200
-+
 +#ifdef __SW_BOOT_NOR
 +#define __NOR_RST_CMD	\
 +norboot=i2c dev 1; i2c mw 18 1 __SW_BOOT_NOR 1; \
@@ -25653,7 +25633,7 @@ index 0000000..eabc7cd
 +    "hwconfig=usb1:dr_mode=host,phy_type=ulpi\0"    \
 +    "consoledev=ttyS0\0"        \
 +    "onie_start=0xec040000\0"   \
-+    "onie_sz.b=0xd00000\0"      \
++    "onie_sz.b=0x500000\0"      \
 +    "diag_start=0xecd40000\0"   \
 +    "diag_sz.b=0x01600000\0"    \
 +    "boot_diag=if test -n $onie_boot_reason; then if test $onie_boot_reason = diag; then run diag_bootcmd; fi; fi\0" \
@@ -30467,7 +30447,7 @@ index 76b3ca6..3a166d9 100644
 +
 +#endif	/* __CONFIG_H */
 diff --git a/include/configs/common_config.h b/include/configs/common_config.h
-index e9e2135..52ccb7d 100644
+index e9e2135..9d0d47d 100644
 --- a/include/configs/common_config.h
 +++ b/include/configs/common_config.h
 @@ -26,7 +26,7 @@
@@ -30553,15 +30533,6 @@ index e9e2135..52ccb7d 100644
  
  #define CONFIG_ENV_SIZE		0x2000
  
-@@ -144,7 +147,7 @@
-  * Environment Variable Configuration
-  */
- 
--#define CONFIG_BOOTDELAY 10	/* -1 disables auto-boot */
-+/*#define CONFIG_BOOTDELAY 3*/	/* -1 disables auto-boot */
- #undef	CONFIG_BOOTARGS		/* the boot command will set bootargs*/
- 
- #define CONFIG_BAUDRATE	115200
 diff --git a/include/configs/corenet_ds.h b/include/configs/corenet_ds.h
 index 3f42cd9..26d1689 100644
 --- a/include/configs/corenet_ds.h

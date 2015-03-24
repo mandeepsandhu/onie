@@ -20,6 +20,78 @@ provisioning.
 
 To get started, read the :ref:`onie_overview` section.
 
+How often is ONIE released?
+===========================
+
+ONIE is released every 3 months.  For more details, read the
+:ref:`release_cycle` section.
+
+I have a switch from vendor XYZ that does not have ONIE installed.  Can I install ONIE on it myself?
+====================================================================================================
+
+Short answer: no.
+
+To "ONIE-ize" hardware is tricky to do correctly, highly vendor and
+model specic, and fraught with peril.  There is more to an ONIE SKU
+from a hardware vendor than just the installed ONIE software.
+
+The first peril is that if the operation is not performed correctly
+you are left with a dead, bricked box.  Nobody wants that.  You would
+very likely need to RMA the box to your hardware supplier at this
+point.
+
+Let's assume you are a seasoned firmware / hardware developer armed
+with a JTAG debugger for BIOS/U-Boot recovery.  You would likely be
+able to install the ONIE software after a few attemps.  However, that
+sets you up for the next problem -- the EEPROM format and contents.
+
+The EEPROM format and contents between ONIE and non-ONIE SKUs
+provided by hardware vendors is completely different.
+
+The ONIE EEPROM format is standardized across all the hardware vendor
+platforms.  This one of big accomplishments of the ONIE -- getting all
+the different hardware vendors to agree on a common EEPROM format.
+
+The EEPROM requirements are described in the
+:ref:`non_volatile_board_info` section.
+
+The EEPROM contents on non-ONIE product SKUs use the vendor's
+proprietary (and different per vendor) format.  To ONIE-ize a box you
+would have to migrate/translate the vendor's format/contents into the
+ONIE format.  On top of that the number of MAC addresses allocated for
+the device typically differs between the ONIE requirements and
+non-ONIE SKUs -- you would have to allocate MAC addresses from your
+own `MAC OUI
+<https://en.wikipedia.org/wiki/Organizationally_unique_identifier>`_
+pool.
+
+Another thing to be aware of if you go down this path is that the
+non-ONIE and ONIE product SKUs may have front panel port labeling and
+FRU labeling differences.  See the ONIE labeling requirements
+:ref:`fru_labeling` section, which may differ from a vendor's non-ONIE
+SKU.
+
+Why is the default console baud rate 115200?
+=============================================
+
+It is the 21st century -- time to use a reasonably fast baud rate.
+
+Why is the Ethernet management port IPv4 address set to 192.168.3.10?
+=====================================================================
+
+``192.168.3.10`` is the default fall back IPv4 address, which is used
+when no other address configuration mechanism works.  This is usually
+*not* what you want and typically indicates your DHCP configuration is
+not quite right.
+
+See :ref:`onie_eth_mgmt_config` for details.
+
+
+Is there a virtual machine implementation?
+==========================================
+
+Yes.  See the :ref:`x86_virtual_machine` section for details.
+
 Is there an ONIE state transition diagram?
 ==========================================
 
@@ -27,22 +99,6 @@ The ONIE states and transitions can be a little confusing.  For a high
 level overview of the states and transitions, read the :ref:`onie_fsm` section.
 
 For more details, read the :ref:`full_design_spec` chapter.
-
-Why is the default console baud rate 115200?
-=============================================
-
-It is the 21st century -- time to use a reasonably fast baud rate.
-
-How often is ONIE released?
-===========================
-
-ONIE is released every 3 months.  For more details, read the
-:ref:`release_cycle` section.
-
-Is there a virtual machine implementation?
-==========================================
-
-Yes.  See the :ref:`x86_virtual_machine` section for details.
 
 .. _cache_packages:
 
