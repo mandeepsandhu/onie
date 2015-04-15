@@ -2,7 +2,7 @@
 #>
 #
 #  Copyright (C) 2013-2014 Curt Brune <curt@cumulusnetworks.com>
-#  Copyright (C) 2014 Carlos Cardenas <cardenas12@gmail.com>
+#  Copyright (C) 2014-2015 Carlos Cardenas <carlos@cumulusnetworks.com>
 #  Copyright (C) 2014 david_yang <david_yang@accton.com>
 #  Copyright (C) 2014 Mandeep Sandhu <mandeep.sandhu@cyaninc.com>
 #
@@ -48,7 +48,6 @@
 #   │   ├── lzo
 #   │   ├── mtdutils
 #   │   └── dropbear
-#   ├── docs
 #   └── images
 #
 #<
@@ -149,7 +148,7 @@ INITRAMFSDIR	=  $(MBUILDDIR)/initramfs
 TREEDIRS     += $(STAMPDIR) $(STAGE_SYSROOT) $(INITRAMFSDIR)
 
 ifneq (,$(MAKECMDGOALS))
-  ifeq (,$(filter onie-release-tag help distclean %build-host doc% %html %pdf, $(MAKECMDGOALS)))
+  ifeq (,$(filter onie-release-tag help distclean %build-host, $(MAKECMDGOALS)))
     ifeq ($(wildcard $(MACHINEDIR)/*),)
       $(warning Unable to find machine directory '$(MACHINEDIR)')
       $(warning You must set the MACHINE= variable when invoking make.)
@@ -313,16 +312,18 @@ endif
 ifeq ($(ETHTOOL_ENABLE),yes)
   include make/ethtool.make
 endif
+ifeq ($(MTREE_ENABLE),yes)
+  include make/mtree.make
+endif
 include make/images.make
 include make/demo.make
-include make/docs.make
 
 #-------------------------------------------------------------------------------
 #
 # top level targets
 #
 
-PHONY += all source demo clean userspace-clean download download-clean docs
+PHONY += all source demo clean userspace-clean download download-clean
 
 source: $(SOURCE)
 	$(Q) echo "=== Finished making $@ ==="
@@ -335,8 +336,6 @@ all: $(KERNEL) $(UBOOT) $(SYSROOT) $(IMAGE)
 
 demo: $(KERNEL) $(DEMO_IMAGE)
 	$(Q) echo "=== Finished making demo onie-$(PLATFORM) $(LSB_RELEASE_TAG) ==="
-
-docs: html pdf
 
 userspace-clean: $(USERSPACE_CLEAN)
 	$(Q) echo "=== Finished making $@ ==="
@@ -372,7 +371,7 @@ machine-prefix:
 	$(Q) echo $(MACHINE_PREFIX)
 
 # Install required build packages for a x86_64 debian based build host
-DEBIAN_BUILD_HOST_PACKAGES	= build-essential stgit u-boot-tools python-sphinx rst2pdf \
+DEBIAN_BUILD_HOST_PACKAGES	= build-essential stgit u-boot-tools \
 				  gperf device-tree-compiler python-all-dev genisoimage \
 				  autoconf automake bison flex texinfo libtool \
 				  realpath gawk libncurses5 libncurses5-dev bc

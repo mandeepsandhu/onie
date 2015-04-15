@@ -1,9 +1,10 @@
 #-------------------------------------------------------------------------------
 #
 #  Copyright (C) 2013-2014 Curt Brune <curt@cumulusnetworks.com>
-#  Copyright (C) 2014 david_yang <david_yang@accton.com>
+#  Copyright (C) 2014-2015 david_yang <david_yang@accton.com>
 #  Copyright (C) 2014 Stephen Su <sustephen@juniper.net>
 #  Copyright (C) 2014 Puneet <puneet@cumulusnetworks.com>
+#  Copyright (C) 2015 Carlos Cardenas <carlos@cumulusnetworks.com>
 #
 #  SPDX-License-Identifier:     GPL-2.0
 #
@@ -64,6 +65,10 @@ endif
 
 ifeq ($(SYSLINUX_ENABLE),yes)
   PACKAGES_INSTALL_STAMPS += $(SYSLINUX_SOURCE_STAMP)
+endif
+
+ifeq ($(MTREE_ENABLE),yes)
+  PACKAGES_INSTALL_STAMPS += $(MTREE_INSTALL_STAMP)
 endif
 
 ifndef MAKE_CLEAN
@@ -132,7 +137,8 @@ endif
 sysroot-check: $(SYSROOT_CHECK_STAMP)
 $(SYSROOT_CHECK_STAMP): $(PACKAGES_INSTALL_STAMPS)
 	$(Q) for file in $(SYSROOT_LIBS) ; do \
-		cp -av $(DEV_SYSROOT)/lib/$$file $(SYSROOTDIR)/lib/ || exit 1 ; \
+		find $(DEV_SYSROOT)/lib -name $$file | xargs -i \
+		cp -av {} $(SYSROOTDIR)/lib/ || exit 1 ; \
 	done
 	$(Q) for file in $(DEBUG_UTILS) ; do \
 		cp -av $$file $(SYSROOTDIR)/usr/bin || exit 1 ; \
