@@ -1,6 +1,7 @@
 #-------------------------------------------------------------------------------
 #
-#  Copyright (C) 2013-2014 Curt Brune <curt@cumulusnetworks.com>
+#  Copyright (C) 2013-2015 Curt Brune <curt@cumulusnetworks.com>
+#  Copyright (C) 2015 david_yang <david_yang@accton.com>
 #
 #  SPDX-License-Identifier:     GPL-2.0
 #
@@ -47,10 +48,13 @@ endif
 
 # List of files to remove from base ONIE image for the demo.
 DEMO_TRIM = \
+   etc/rc0.d/K25discover.sh	\
    etc/rc3.d/S50discover.sh	\
+   etc/rc6.d/K25discover.sh	\
    etc/init.d/discover.sh	\
    bin/discover			\
    bin/uninstaller		\
+   bin/onie-uninstaller		\
    lib/onie/udhcp4_sd		
 
 PHONY += demo-sysroot-complete
@@ -99,7 +103,6 @@ endif
 define demo_MKIMAGE
 	CONSOLE_SPEED=$(CONSOLE_SPEED) \
 	CONSOLE_DEV=$(CONSOLE_DEV) \
-	CONSOLE_FLAG=$(CONSOLE_FLAG) \
 	CONSOLE_PORT=$(CONSOLE_PORT) \
 	./scripts/onie-mk-demo.sh $(ONIE_ARCH) $(MACHINE) $(PLATFORM) \
 		$(DEMO_INSTALLER_DIR) $(MACHINEDIR)/demo/platform.conf $(1) $(2) $(DEMO_IMAGE_PARTS) 
