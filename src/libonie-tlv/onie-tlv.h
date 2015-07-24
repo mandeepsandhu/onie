@@ -187,6 +187,6 @@ bool tlvinfo_get_uint16(struct tlvinfo_tlv *tlv, int *value);
  *
  * Return: Pointer to a TLV type string.
  */
-const char * tlvinfo_tlv_type_to_string(uint8_t tlv_type);
+const char * tlvinfo_tlv_type_to_string(uint8_t type);
 
 #endif /* ifndef ONIE_TLV_H */
